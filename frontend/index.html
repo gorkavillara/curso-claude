@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskMaster-TS</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>TaskMaster-TS</h1>
+        <p class="subtitle">A tiny task manager powered by Express + SQLite.</p>
+      </header>
+
+      <section class="card">
+        <h2>New task</h2>
+        <form id="task-form">
+          <label>
+            Title
+            <input id="input-title" type="text" name="title" required />
+          </label>
+          <label>
+            Description
+            <textarea id="input-description" name="description" rows="2"></textarea>
+          </label>
+          <button type="submit">Add task</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Tasks</h2>
+        <ul id="task-list" class="task-list"></ul>
+        <p id="empty-state" class="empty" hidden>No tasks yet. Add one above.</p>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

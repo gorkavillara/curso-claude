@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: taskmaster-ts-backend
+    container_name: taskmaster-backend
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_PATH=/app/data/taskmaster.db
+    ports:
+      - "3000:3000"
+    volumes:
+      - taskmaster-data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: taskmaster-ts-frontend
+    container_name: taskmaster-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  taskmaster-data:
