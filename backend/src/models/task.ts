@@ -80,4 +80,14 @@ export const TaskModel = {
     const result = getDatabase().prepare('DELETE FROM tasks WHERE id = ?').run(id);
     return result.changes > 0;
   },
+
+  stats(): { total: number; completed: number; pending: number } {
+    const row = getDatabase()
+      .prepare('SELECT COUNT(*) AS total, COALESCE(SUM(completed), 0) AS completed FROM tasks')
+      .get() as { total: number; completed: number };
+
+    const total = Number(row.total);
+    const completed = Number(row.completed);
+    return { total, completed, pending: total - completed };
+  },
 };

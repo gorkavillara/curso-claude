@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { createApp } from '../backend/src/app';
-import { initDatabase, closeDatabase } from '../backend/src/db/connection';
+import { initDatabase, closeDatabase, getDatabase } from '../backend/src/db/connection';
 
 describe('Tasks API', () => {
   const app = (() => {
@@ -34,5 +34,25 @@ describe('Tasks API', () => {
     const response = await request(app).post('/api/tasks').send({ description: 'No title' });
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('error');
+  });
+
+  describe('GET /api/tasks/stats', () => {
+    beforeEach(() => {
+      getDatabase().exec('DELETE FROM tasks');
+    });
+
+    it('returns zeroes when there are no tasks', async () => {
+      const response = await request(app).get('/api/tasks/stats').expect(200);
+      expect(response.body).toEqual({ total: 0, completed: 0, pending: 0 });
+    });
+
+    it('counts completed and pending tasks', async () => {
+      await request(app).post('/api/tasks').send({ title: 'A', completed: true }).expect(201);
+      await request(app).post('/api/tasks').send({ title: 'B', completed: true }).expect(201);
+      await request(app).post('/api/tasks').send({ title: 'C' }).expect(201);
+
+      const response = await request(app).get('/api/tasks/stats').expect(200);
+      expect(response.body).toEqual({ total: 3, completed: 2, pending: 1 });
+    });
   });
 });

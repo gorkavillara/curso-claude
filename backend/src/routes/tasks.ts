@@ -37,6 +37,10 @@ tasksRouter.get('/', (_req: Request, res: Response) => {
   res.json(TaskModel.list());
 });
 
+tasksRouter.get('/stats', (_req: Request, res: Response) => {
+  res.json(TaskModel.stats());
+});
+
 tasksRouter.get('/:id', (req: Request, res: Response) => {
   const id = parseId(req.params.id);
   if (id === null) return res.status(400).json({ error: 'Invalid id' });

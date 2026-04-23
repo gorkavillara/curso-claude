@@ -12,6 +12,12 @@ export interface TaskInput {
   completed?: boolean;
 }
 
+export interface TaskStats {
+  total: number;
+  completed: number;
+  pending: number;
+}
+
 const API_BASE = (window as unknown as { API_BASE?: string }).API_BASE ?? 'http://localhost:3000/api';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -33,6 +39,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const api = {
   list: () => request<Task[]>('/tasks'),
+  stats: () => request<TaskStats>('/tasks/stats'),
   create: (input: TaskInput) =>
     request<Task>('/tasks', { method: 'POST', body: JSON.stringify(input) }),
   update: (id: number, input: Partial<TaskInput>) =>
