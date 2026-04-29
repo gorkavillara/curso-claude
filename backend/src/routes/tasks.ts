@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { TaskModel, TaskInput } from '../models/task';
+import { TaskModel, TaskInput, TASK_PRIORITIES, TaskPriority } from '../models/task';
 
 export const tasksRouter = Router();
 
@@ -25,11 +25,19 @@ function validateInput(body: unknown, partial = false): TaskInput | string {
   if (candidate.completed !== undefined && typeof candidate.completed !== 'boolean') {
     return 'Field "completed" must be a boolean';
   }
+  if (
+    candidate.priority !== undefined &&
+    (typeof candidate.priority !== 'string' ||
+      !TASK_PRIORITIES.includes(candidate.priority as TaskPriority))
+  ) {
+    return `Field "priority" must be one of: ${TASK_PRIORITIES.join(', ')}`;
+  }
 
   return {
     title: typeof candidate.title === 'string' ? candidate.title : '',
     description: candidate.description as string | undefined,
     completed: candidate.completed as boolean | undefined,
+    priority: candidate.priority as TaskPriority | undefined,
   };
 }
 

@@ -1,8 +1,15 @@
+export type TaskPriority = 'low' | 'medium' | 'high';
+
+export const TASK_PRIORITIES: readonly TaskPriority[] = ['low', 'medium', 'high'] as const;
+
+export const DEFAULT_TASK_PRIORITY: TaskPriority = 'medium';
+
 export interface Task {
   id: number;
   title: string;
   description: string;
   completed: boolean;
+  priority: TaskPriority;
   created_at: string;
 }
 
@@ -10,6 +17,7 @@ export interface TaskInput {
   title: string;
   description?: string;
   completed?: boolean;
+  priority?: TaskPriority;
 }
 
 export interface TaskStats {

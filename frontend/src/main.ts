@@ -1,8 +1,9 @@
-import { api, type Task } from './api';
+import { api, DEFAULT_TASK_PRIORITY, type Task, type TaskPriority } from './api';
 
 const form = document.getElementById('task-form') as HTMLFormElement;
 const titleInput = document.getElementById('input-title') as HTMLInputElement;
 const descriptionInput = document.getElementById('input-description') as HTMLTextAreaElement;
+const priorityInput = document.getElementById('input-priority') as HTMLSelectElement;
 const list = document.getElementById('task-list') as HTMLUListElement;
 const emptyState = document.getElementById('empty-state') as HTMLParagraphElement;
 
@@ -13,6 +14,7 @@ function render(tasks: Task[]): void {
   for (const task of tasks) {
     const item = document.createElement('li');
     item.className = task.completed ? 'task done' : 'task';
+    item.dataset.priority = task.priority;
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -31,7 +33,11 @@ function render(tasks: Task[]): void {
     const desc = document.createElement('span');
     desc.textContent = task.description;
 
-    content.append(title, desc);
+    const priority = document.createElement('span');
+    priority.className = `priority priority-${task.priority}`;
+    priority.textContent = task.priority;
+
+    content.append(title, desc, priority);
 
     const remove = document.createElement('button');
     remove.type = 'button';
@@ -64,6 +70,7 @@ form.addEventListener('submit', async (event) => {
   await api.create({
     title,
     description: descriptionInput.value.trim(),
+    priority: (priorityInput.value as TaskPriority) || DEFAULT_TASK_PRIORITY,
   });
 
   form.reset();

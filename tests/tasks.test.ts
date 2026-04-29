@@ -36,6 +36,48 @@ describe('Tasks API', () => {
     expect(response.body).toHaveProperty('error');
   });
 
+  describe('priority field', () => {
+    it('defaults to medium when no priority is provided', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .send({ title: 'Default priority task' })
+        .expect(201);
+      expect(response.body.priority).toBe('medium');
+    });
+
+    it('accepts low, medium and high', async () => {
+      for (const priority of ['low', 'medium', 'high'] as const) {
+        const response = await request(app)
+          .post('/api/tasks')
+          .send({ title: `Task ${priority}`, priority })
+          .expect(201);
+        expect(response.body.priority).toBe(priority);
+      }
+    });
+
+    it('rejects invalid priority values', async () => {
+      const response = await request(app)
+        .post('/api/tasks')
+        .send({ title: 'Bad priority', priority: 'urgent' });
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty('error');
+    });
+
+    it('updates the priority of an existing task', async () => {
+      const created = await request(app)
+        .post('/api/tasks')
+        .send({ title: 'Updatable' })
+        .expect(201);
+      expect(created.body.priority).toBe('medium');
+
+      const updated = await request(app)
+        .put(`/api/tasks/${created.body.id}`)
+        .send({ priority: 'high' })
+        .expect(200);
+      expect(updated.body.priority).toBe('high');
+    });
+  });
+
   describe('GET /api/tasks/stats', () => {
     beforeEach(() => {
       getDatabase().exec('DELETE FROM tasks');

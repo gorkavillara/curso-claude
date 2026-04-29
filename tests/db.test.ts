@@ -14,9 +14,11 @@ describe('TaskModel (SQLite)', () => {
     const created = TaskModel.create({ title: 'First', description: 'one' });
     expect(created.id).toBeGreaterThan(0);
     expect(created.completed).toBe(false);
+    expect(created.priority).toBe('medium');
 
-    const updated = TaskModel.update(created.id, { completed: true });
+    const updated = TaskModel.update(created.id, { completed: true, priority: 'high' });
     expect(updated?.completed).toBe(true);
+    expect(updated?.priority).toBe('high');
 
     const removed = TaskModel.remove(created.id);
     expect(removed).toBe(true);

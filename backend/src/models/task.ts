@@ -1,10 +1,17 @@
 import { getDatabase } from '../db/connection';
 
+export type TaskPriority = 'low' | 'medium' | 'high';
+
+export const TASK_PRIORITIES: readonly TaskPriority[] = ['low', 'medium', 'high'] as const;
+
+export const DEFAULT_TASK_PRIORITY: TaskPriority = 'medium';
+
 export interface Task {
   id: number;
   title: string;
   description: string;
   completed: boolean;
+  priority: TaskPriority;
   created_at: string;
 }
 
@@ -12,6 +19,7 @@ export interface TaskInput {
   title: string;
   description?: string;
   completed?: boolean;
+  priority?: TaskPriority;
 }
 
 interface TaskRow {
@@ -19,6 +27,7 @@ interface TaskRow {
   title: string;
   description: string;
   completed: number;
+  priority: TaskPriority;
   created_at: string;
 }
 
@@ -28,6 +37,7 @@ function rowToTask(row: TaskRow): Task {
     title: row.title,
     description: row.description,
     completed: row.completed === 1,
+    priority: row.priority,
     created_at: row.created_at,
   };
 }
@@ -35,22 +45,33 @@ function rowToTask(row: TaskRow): Task {
 export const TaskModel = {
   list(): Task[] {
     const rows = getDatabase()
-      .prepare('SELECT id, title, description, completed, created_at FROM tasks ORDER BY id DESC')
+      .prepare(
+        'SELECT id, title, description, completed, priority, created_at FROM tasks ORDER BY id DESC',
+      )
       .all() as TaskRow[];
     return rows.map(rowToTask);
   },
 
   get(id: number): Task | null {
     const row = getDatabase()
-      .prepare('SELECT id, title, description, completed, created_at FROM tasks WHERE id = ?')
+      .prepare(
+        'SELECT id, title, description, completed, priority, created_at FROM tasks WHERE id = ?',
+      )
       .get(id) as TaskRow | undefined;
     return row ? rowToTask(row) : null;
   },
 
   create(input: TaskInput): Task {
     const result = getDatabase()
-      .prepare('INSERT INTO tasks (title, description, completed) VALUES (?, ?, ?)')
-      .run(input.title, input.description ?? '', input.completed ? 1 : 0);
+      .prepare(
+        'INSERT INTO tasks (title, description, completed, priority) VALUES (?, ?, ?, ?)',
+      )
+      .run(
+        input.title,
+        input.description ?? '',
+        input.completed ? 1 : 0,
+        input.priority ?? DEFAULT_TASK_PRIORITY,
+      );
 
     const created = this.get(Number(result.lastInsertRowid));
     if (!created) {
@@ -67,11 +88,14 @@ export const TaskModel = {
       title: input.title ?? existing.title,
       description: input.description ?? existing.description,
       completed: input.completed ?? existing.completed,
+      priority: input.priority ?? existing.priority,
     };
 
     getDatabase()
-      .prepare('UPDATE tasks SET title = ?, description = ?, completed = ? WHERE id = ?')
-      .run(next.title, next.description, next.completed ? 1 : 0, id);
+      .prepare(
+        'UPDATE tasks SET title = ?, description = ?, completed = ?, priority = ? WHERE id = ?',
+      )
+      .run(next.title, next.description, next.completed ? 1 : 0, next.priority, id);
 
     return this.get(id);
   },
