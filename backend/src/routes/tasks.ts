@@ -3,6 +3,16 @@ import { TaskModel, TaskInput, TASK_PRIORITIES, TaskPriority } from '../models/t
 
 export const tasksRouter = Router();
 
+tasksRouter.use((req: Request, _res: Response, next: NextFunction) => {
+  const start = Date.now();
+  console.log(`[tasks] -> ${req.method} ${req.originalUrl}`);
+  _res.on('finish', () => {
+    const ms = Date.now() - start;
+    console.log(`[tasks] <- ${req.method} ${req.originalUrl} ${_res.statusCode} (${ms}ms)`);
+  });
+  next();
+});
+
 function parseId(raw: string): number | null {
   const id = Number(raw);
   return Number.isInteger(id) && id > 0 ? id : null;
