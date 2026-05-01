@@ -47,6 +47,8 @@ tasksRouter.get('/:id', (req: Request, res: Response) => {
 });
 
 tasksRouter.post('/', (req: Request, res: Response, next: NextFunction) => {
+  // NOTA: handler síncrono. En Express 5 los errores de promesas en handlers async se propagan
+  // automáticamente; aquí seguimos la firma de Express 4 con try/catch + next(err).
   try {
     const parsed = validateInput(req.body);
     if (typeof parsed === 'string') {
