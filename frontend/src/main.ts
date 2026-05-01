@@ -6,11 +6,11 @@ const descriptionInput = document.getElementById('input-description') as HTMLTex
 const list = document.getElementById('task-list') as HTMLUListElement;
 const emptyState = document.getElementById('empty-state') as HTMLParagraphElement;
 
-function render(tasks: Task[]): void {
+function render(data: Task[]): void {
   list.innerHTML = '';
-  emptyState.hidden = tasks.length > 0;
+  emptyState.hidden = data.length > 0;
 
-  for (const task of tasks) {
+  for (const task of data) {
     const item = document.createElement('li');
     item.className = task.completed ? 'task done' : 'task';
 
@@ -49,8 +49,8 @@ function render(tasks: Task[]): void {
 
 async function refresh(): Promise<void> {
   try {
-    const tasks = await api.list();
-    render(tasks);
+    const data = await api.list();
+    render(data);
   } catch (err) {
     console.error(err);
   }
