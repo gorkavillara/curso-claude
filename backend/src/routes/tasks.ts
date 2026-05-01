@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { TaskModel, TaskInput } from '../models/task';
+import { TagModel } from '../models/tag';
 
 export const tasksRouter = Router();
 
@@ -35,6 +36,16 @@ function validateInput(body: unknown, partial = false): TaskInput | string {
 
 tasksRouter.get('/', (_req: Request, res: Response) => {
   res.json(TaskModel.list());
+});
+
+tasksRouter.get('/search', (req: Request, res: Response) => {
+  try {
+    const tag = req.query.tag as string;
+    res.json(TagModel.searchTasksByTag(tag));
+  } catch (err) {
+    const e = err as Error;
+    res.status(500).json({ error: e.message, stack: e.stack });
+  }
 });
 
 tasksRouter.get('/:id', (req: Request, res: Response) => {
