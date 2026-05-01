@@ -1,11 +1,18 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { TaskModel, TaskInput } from '../models/task';
+import { filterTasks, searchTasks, TaskFilter } from '../legacy/filters';
+import { sortTasks, SortKey, SortDir, paginate } from '../legacy/sorters';
 
 export const tasksRouter = Router();
 
 function parseId(raw: string): number | null {
   const id = Number(raw);
   return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+function parsePositiveInt(raw: unknown, fallback: number): number {
+  const n = Number(raw);
+  return Number.isInteger(n) && n > 0 ? n : fallback;
 }
 
 function validateInput(body: unknown, partial = false): TaskInput | string {
@@ -33,8 +40,22 @@ function validateInput(body: unknown, partial = false): TaskInput | string {
   };
 }
 
-tasksRouter.get('/', (_req: Request, res: Response) => {
-  res.json(TaskModel.list());
+tasksRouter.get('/', (req: Request, res: Response) => {
+  const all = TaskModel.list();
+
+  const filter = (req.query.filter as TaskFilter) ?? 'all';
+  const search = (req.query.q as string) ?? '';
+  const sortKey = (req.query.sort as SortKey) ?? 'created_at';
+  const sortDir = (req.query.dir as SortDir) ?? 'desc';
+  const page = parsePositiveInt(req.query.page, 1);
+  const size = parsePositiveInt(req.query.size, 20);
+
+  let result = filterTasks(all, filter);
+  result = searchTasks(result, search);
+  result = sortTasks(result, sortKey, sortDir);
+  result = paginate(result, page, size);
+
+  res.json({ items: result, page, size, total: all.length });
 });
 
 tasksRouter.get('/:id', (req: Request, res: Response) => {
