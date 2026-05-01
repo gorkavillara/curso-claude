@@ -6,13 +6,17 @@ let db: Database.Database | null = null;
 
 function resolveDbPath(): string {
   const configured = process.env.DB_PATH;
-  if (configured) return configured;
+  if (!configured) {
+    throw new Error(
+      'Missing required environment variable DB_PATH. Set it in .env (see .env.example) before running tests.',
+    );
+  }
 
-  const dataDir = path.resolve(process.cwd(), 'data');
+  const dataDir = path.dirname(configured);
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
-  return path.join(dataDir, 'taskmaster.db');
+  return configured;
 }
 
 export function initDatabase(dbPath?: string): Database.Database {

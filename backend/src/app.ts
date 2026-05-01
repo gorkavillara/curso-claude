@@ -4,6 +4,12 @@ import { tasksRouter } from './routes/tasks';
 import { errorHandler } from './middleware/errorHandler';
 
 export function createApp(): Application {
+  if (!process.env.APP_SECRET) {
+    throw new Error(
+      'Missing required environment variable APP_SECRET. Copy .env.example to .env and set the value.',
+    );
+  }
+
   const app = express();
 
   app.use(cors());
