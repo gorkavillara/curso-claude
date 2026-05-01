@@ -26,8 +26,20 @@ describe('Tasks API', () => {
     expect(typeof created.body.id).toBe('number');
 
     const list = await request(app).get('/api/tasks').expect(200);
-    expect(Array.isArray(list.body)).toBe(true);
-    expect(list.body.some((t: { id: number }) => t.id === created.body.id)).toBe(true);
+    expect(Array.isArray(list.body.items)).toBe(true);
+    expect(list.body.items.some((t: { id: number }) => t.id === created.body.id)).toBe(true);
+  });
+
+  it('filters tasks by completion status', async () => {
+    await request(app)
+      .post('/api/tasks')
+      .send({ title: 'Pending one', completed: false })
+      .expect(201);
+
+    const pending = await request(app).get('/api/tasks?filter=pending').expect(200);
+    expect(pending.body.items.every((t: { completed: boolean }) => t.completed === false)).toBe(
+      true,
+    );
   });
 
   it('rejects a task without title', async () => {
