@@ -22,12 +22,19 @@ interface TaskRow {
   created_at: string;
 }
 
+// Converts a row to a Task
 function rowToTask(row: TaskRow): Task {
+  // Build the task
   return {
+    // id field
     id: row.id,
+    // title field
     title: row.title,
+    // description field
     description: row.description,
+    // SQLite stores booleans as integers (0/1)
     completed: row.completed === 1,
+    // created_at field
     created_at: row.created_at,
   };
 }
