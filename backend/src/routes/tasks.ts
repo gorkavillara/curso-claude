@@ -37,6 +37,16 @@ tasksRouter.get('/', (_req: Request, res: Response) => {
   res.json(TaskModel.list());
 });
 
+tasksRouter.get('/stats', (_req: Request, res: Response) => {
+  const tasks = TaskModel.list();
+  const completed = tasks.filter((t) => t.completed).length;
+  res.json({
+    total: tasks.length,
+    pending: tasks.length - completed,
+    completed,
+  });
+});
+
 tasksRouter.get('/:id', (req: Request, res: Response) => {
   const id = parseId(req.params.id);
   if (id === null) return res.status(400).json({ error: 'Invalid id' });
