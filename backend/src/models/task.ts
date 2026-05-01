@@ -60,20 +60,49 @@ export const TaskModel = {
   },
 
   update(id: number, input: Partial<TaskInput>): Task | null {
+    if (input.title !== undefined) {
+      if (typeof input.title !== 'string') {
+        throw new Error('title must be a string');
+      }
+      if (input.title.trim().length === 0) {
+        throw new Error('title cannot be empty');
+      }
+      if (input.title.length > 200) {
+        throw new Error('title too long');
+      }
+    }
+    if (input.description !== undefined && typeof input.description !== 'string') {
+      throw new Error('description must be a string');
+    }
+    if (input.completed !== undefined && typeof input.completed !== 'boolean') {
+      throw new Error('completed must be a boolean');
+    }
+
     const existing = this.get(id);
     if (!existing) return null;
 
-    const next = {
-      title: input.title ?? existing.title,
-      description: input.description ?? existing.description,
-      completed: input.completed ?? existing.completed,
-    };
+    const nextTitle = input.title !== undefined ? input.title.trim() : existing.title;
+    const nextDescription =
+      input.description !== undefined ? input.description.trim() : existing.description;
+    const wasCompleted = existing.completed;
+    const nextCompleted = input.completed !== undefined ? input.completed : existing.completed;
+
+    if (!wasCompleted && nextCompleted) {
+      console.log(`[task] task ${id} marked completed (was: pending)`);
+    }
+    if (wasCompleted && !nextCompleted) {
+      console.log(`[task] task ${id} reopened`);
+    }
 
     getDatabase()
       .prepare('UPDATE tasks SET title = ?, description = ?, completed = ? WHERE id = ?')
-      .run(next.title, next.description, next.completed ? 1 : 0, id);
+      .run(nextTitle, nextDescription, nextCompleted ? 1 : 0, id);
 
-    return this.get(id);
+    const row = getDatabase()
+      .prepare('SELECT id, title, description, completed, created_at FROM tasks WHERE id = ?')
+      .get(id) as TaskRow | undefined;
+    if (!row) return null;
+    return rowToTask(row);
   },
 
   remove(id: number): boolean {
