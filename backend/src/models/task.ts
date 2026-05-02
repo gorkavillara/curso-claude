@@ -22,6 +22,14 @@ interface TaskRow {
   created_at: string;
 }
 
+export class ValidationError extends Error {
+  status = 400;
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
 function rowToTask(row: TaskRow): Task {
   return {
     id: row.id,
@@ -32,7 +40,42 @@ function rowToTask(row: TaskRow): Task {
   };
 }
 
+function validateInput(body: unknown, partial: boolean): TaskInput {
+  if (!body || typeof body !== 'object') {
+    throw new ValidationError('Body must be a JSON object');
+  }
+  const candidate = body as Record<string, unknown>;
+
+  if (!partial || candidate.title !== undefined) {
+    if (typeof candidate.title !== 'string' || candidate.title.trim() === '') {
+      throw new ValidationError('Field "title" is required and must be a non-empty string');
+    }
+  }
+  if (candidate.description !== undefined && typeof candidate.description !== 'string') {
+    throw new ValidationError('Field "description" must be a string');
+  }
+  if (candidate.completed !== undefined && typeof candidate.completed !== 'boolean') {
+    throw new ValidationError('Field "completed" must be a boolean');
+  }
+
+  return {
+    title: typeof candidate.title === 'string' ? candidate.title : '',
+    description: candidate.description as string | undefined,
+    completed: candidate.completed as boolean | undefined,
+  };
+}
+
+function parseId(raw: string): number {
+  const id = Number(raw);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new ValidationError('Invalid id');
+  }
+  return id;
+}
+
 export const TaskModel = {
+  parseId,
+
   list(): Task[] {
     const rows = getDatabase()
       .prepare('SELECT id, title, description, completed, created_at FROM tasks ORDER BY id DESC')
@@ -47,7 +90,8 @@ export const TaskModel = {
     return row ? rowToTask(row) : null;
   },
 
-  create(input: TaskInput): Task {
+  create(body: unknown): Task {
+    const input = validateInput(body, false);
     const result = getDatabase()
       .prepare('INSERT INTO tasks (title, description, completed) VALUES (?, ?, ?)')
       .run(input.title, input.description ?? '', input.completed ? 1 : 0);
@@ -59,12 +103,13 @@ export const TaskModel = {
     return created;
   },
 
-  update(id: number, input: Partial<TaskInput>): Task | null {
+  update(id: number, body: unknown): Task | null {
+    const input = validateInput(body, true);
     const existing = this.get(id);
     if (!existing) return null;
 
     const next = {
-      title: input.title ?? existing.title,
+      title: input.title || existing.title,
       description: input.description ?? existing.description,
       completed: input.completed ?? existing.completed,
     };
