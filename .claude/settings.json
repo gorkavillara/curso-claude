@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(git status)",
+      "Bash(git diff)"
+    ],
+    "ask": [
+      "Bash(npm install*)",
+      "Bash(git commit*)",
+      "Bash(git clone*)",
+      "Bash(git pull*)"
+    ],
+    "deny": [
+      "Bash(Remove-Item -Recurse -Force*)",
+      "Bash(rm -rf*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(kill -9*)",
+      "Read(*secrets*)",
+      "Read(.env)"
+    ]
+  }
+}

@@ -25,4 +25,4 @@ data/*.sqlite
 
 # Custom
 .docs/
-.claude/
+.claude/settings.local.json
