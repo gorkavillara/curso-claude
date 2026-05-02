@@ -3,8 +3,11 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "../dist/backend",
-    "types": ["node"],
-    "ignoreDeprecations": "6.0"
+    "types": [
+      "node"
+    ]
   },
-  "include": ["src/**/*.ts"]
+  "include": [
+    "src/**/*.ts"
+  ]
 }
