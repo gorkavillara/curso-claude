@@ -43,7 +43,7 @@ tasksRouter.get('/stats', (_req: Request, res: Response) => {
   const pending = tasks.length - completed;
   res.json({
     total: tasks.length,
-    PENDING: pending,
+    pending,
     completed,
   });
 });
