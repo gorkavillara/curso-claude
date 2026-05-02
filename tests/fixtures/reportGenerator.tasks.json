@@ -1,0 +1,9 @@
+{
+  "tasks": [
+    { "title": "Write docs", "description": "Add README", "completed": false },
+    { "title": "Ship v1", "description": "", "completed": true },
+    { "title": "Refactor router", "completed": false },
+    { "title": "Numeric truthy", "description": "completed is 1", "completed": 1 },
+    { "title": "String truthy", "description": "completed is the string true", "completed": "true" }
+  ]
+}
