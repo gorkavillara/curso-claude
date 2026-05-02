@@ -26,7 +26,8 @@ export function initDatabase(dbPath?: string): Database.Database {
       title TEXT NOT NULL,
       description TEXT NOT NULL DEFAULT '',
       completed INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      completed_at TEXT
     );
   `);
 

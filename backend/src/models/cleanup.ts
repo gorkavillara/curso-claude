@@ -7,7 +7,7 @@ export function cleanupCompletedTasks(now: Date = new Date()): number {
 
   const result = getDatabase()
     .prepare(
-      "DELETE FROM tasks WHERE completed = 1 AND datetime(created_at) < datetime(?)",
+      "DELETE FROM tasks WHERE completed = 1 AND completed_at IS NOT NULL AND datetime(completed_at) < datetime(?)",
     )
     .run(cutoff);
 
