@@ -24,12 +24,21 @@
             Description
             <textarea id="input-description" name="description" rows="2"></textarea>
           </label>
+          <label>
+            Tags (comma-separated)
+            <input id="input-tags" type="text" name="tags" placeholder="urgent, home" />
+          </label>
           <button type="submit">Add task</button>
         </form>
       </section>
 
       <section class="card">
         <h2>Tasks</h2>
+        <div id="filter-bar" class="filter-bar" hidden>
+          <span>Filtering by</span>
+          <span id="filter-tag" class="chip"></span>
+          <button id="filter-clear" type="button" class="link">Clear filter</button>
+        </div>
         <ul id="task-list" class="task-list"></ul>
         <p id="empty-state" class="empty" hidden>No tasks yet. Add one above.</p>
       </section>

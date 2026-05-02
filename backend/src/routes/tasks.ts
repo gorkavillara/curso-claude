@@ -25,16 +25,27 @@ function validateInput(body: unknown, partial = false): TaskInput | string {
   if (candidate.completed !== undefined && typeof candidate.completed !== 'boolean') {
     return 'Field "completed" must be a boolean';
   }
+  if (candidate.tags !== undefined && !Array.isArray(candidate.tags)) {
+    return 'Field "tags" must be an array of strings';
+  }
 
   return {
     title: typeof candidate.title === 'string' ? candidate.title : '',
     description: candidate.description as string | undefined,
     completed: candidate.completed as boolean | undefined,
+    tags: candidate.tags as string[] | undefined,
   };
 }
 
-tasksRouter.get('/', (_req: Request, res: Response) => {
-  res.json(TaskModel.list());
+tasksRouter.get('/', (req: Request, res: Response) => {
+  const tagParam = req.query.tag;
+  if (tagParam !== undefined) {
+    if (typeof tagParam !== 'string') {
+      return res.status(400).json({ error: 'Query "tag" must be a single string' });
+    }
+    return res.json(TaskModel.listByTag(tagParam));
+  }
+  return res.json(TaskModel.list());
 });
 
 tasksRouter.get('/:id', (req: Request, res: Response) => {

@@ -4,12 +4,14 @@ export interface Task {
   description: string;
   completed: boolean;
   created_at: string;
+  tags: string[];
 }
 
 export interface TaskInput {
   title: string;
   description?: string;
   completed?: boolean;
+  tags?: string[];
 }
 
 const API_BASE = (window as unknown as { API_BASE?: string }).API_BASE ?? 'http://localhost:3000/api';
@@ -32,7 +34,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  list: () => request<Task[]>('/tasks'),
+  list: (tag?: string) =>
+    request<Task[]>(tag ? `/tasks?tag=${encodeURIComponent(tag)}` : '/tasks'),
   create: (input: TaskInput) =>
     request<Task>('/tasks', { method: 'POST', body: JSON.stringify(input) }),
   update: (id: number, input: Partial<TaskInput>) =>

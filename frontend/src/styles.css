@@ -117,3 +117,45 @@ button.remove {
   color: var(--muted);
   font-style: italic;
 }
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.chip {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: rgba(56, 189, 248, 0.2);
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.link {
+  background: none;
+  color: var(--accent);
+  border: none;
+  padding: 0;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}

@@ -1,0 +1,5 @@
+- [ ] Cambios en código identificados (archivos)
+- [ ] Tests previstos por nivel (unit, integración)
+- [ ] Documentación a actualizar (README, CLAUDE.md si aplica)
+- [ ] Consideraciones de seguridad (input validation, escape)
+- [ ] Migración / rollback definidos

@@ -2,7 +2,7 @@
 
 Full-stack demo project used in a Claude Code course. It is intentionally **multi-layered** so an AI assistant can be asked to navigate the codebase and perform changes that span several files (routes, model, tests, frontend client and Dockerfile).
 
-- **Backend:** Node.js + TypeScript + Express, persisting data in SQLite via `better-sqlite3`.
+- **Backend:** Node.js + TypeScript + Express, persisting data in SQLite via `better-sqlite3`. Tasks support tags (many-to-many) and can be filtered by tag.
 - **Frontend:** static HTML + a lightweight TypeScript client that consumes the REST API.
 - **Tests:** Jest suite (API + model) using an in-memory SQLite database.
 - **Tooling:** shared `tsconfig.base.json`, root `package.json`, functional `Dockerfile` for the backend.
@@ -65,11 +65,13 @@ npm run dev
 The API listens on `http://localhost:3000`:
 
 - `GET    /health`
-- `GET    /api/tasks`
-- `POST   /api/tasks`         `{ "title": "...", "description": "..." }`
+- `GET    /api/tasks`                  — optional `?tag=foo` filters tasks by tag (case-insensitive)
+- `POST   /api/tasks`                  `{ "title": "...", "description": "...", "tags": ["urgent", "home"] }`
 - `GET    /api/tasks/:id`
-- `PUT    /api/tasks/:id`
+- `PUT    /api/tasks/:id`              — `tags` is optional; omit to keep existing tags, send `[]` to clear
 - `DELETE /api/tasks/:id`
+
+Tags are normalized (`trim().toLowerCase()`), deduplicated, must match `^[a-z0-9][a-z0-9-_]*$`, are limited to 32 characters and 10 per task. Deleting a task removes its `task_tags` rows via `ON DELETE CASCADE`.
 
 The SQLite file is created in `./data/taskmaster.db` by default (override with `DB_PATH`).
 
