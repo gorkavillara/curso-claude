@@ -38,4 +38,5 @@ export const api = {
   update: (id: number, input: Partial<TaskInput>) =>
     request<Task>(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify(input) }),
   remove: (id: number) => request<void>(`/tasks/${id}`, { method: 'DELETE' }),
+  searchByTag: (tag: string) => request<Task[]>(`/tasks/search?tag=${tag}`),
 };
