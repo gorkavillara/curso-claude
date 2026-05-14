@@ -1,0 +1,4 @@
+- Revisor (code review).
+- Tester (generar y validar tests).
+- Documentador (mantener docs sincronizadas).
+- Investigador (explorar cómo otros repos resuelven X).
