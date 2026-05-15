@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "fake-tracker": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["./mcp-server-demo/fake-tracker/server.js"]
+    },
+    "docs": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./docs"]
+    },
+    "stream-mcp": { "type": "sse", "url": "https://..." },
+    "jira": { "type": "sse", "url": "https://mcp.atlassian.com/v1/sse" },
+    "http-mcp": { "type": "http", "url": "https://..." }
+  }
+}

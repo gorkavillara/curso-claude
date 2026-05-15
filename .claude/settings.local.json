@@ -23,7 +23,10 @@
       "Bash(npm outdated *)",
       "WebFetch(domain:github.com)",
       "Bash(git fetch *)",
-      "Bash(git ls-tree *)"
+      "Bash(git ls-tree *)",
+      "mcp__docs__directory_tree",
+      "mcp__docs__list_allowed_directories",
+      "mcp__docs__read_multiple_files"
     ]
   },
   "model": "claude-opus-4-7",
