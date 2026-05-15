@@ -1,0 +1,7 @@
+{
+  "name": "fake-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": { "fake-tracker": "server.js" },
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.0.0" }
+}

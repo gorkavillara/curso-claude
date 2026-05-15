@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'feat\\(tasks\\): add due_date and tags fields *)",
+      "Bash(git commit -m 'feat\\(tasks\\): add bulk delete and bulk complete endpoints *)",
+      "Bash(git commit -m 'refactor\\(tasks\\): extract validation into shared validators module *)",
+      "Bash(git commit -m 'feat\\(tasks\\): add full-text search endpoint with tag filter *)",
+      "Bash(ssh *)",
+      "Bash(git push *)",
+      "Bash(grep -v ' video-04$')",
+      "Bash(xargs -n1 git branch -D)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\gorka\\\\Desktop\\\\Imagina\\\\Cursos\\\\claude-videos\" -Recurse -Depth 2)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\gorka\\\\Desktop\\\\Imagina\\\\Cursos\\\\claude-videos\" -Recurse -Depth 2 | Where-Object { $_.PSIsContainer } | Select-Object FullName | Sort-Object FullName)",
+      "Bash(npm test *)",
+      "Bash(npx jest *)",
+      "Bash(npm run lint *)",
+      "Bash(npx tsc *)",
+      "Bash(npm outdated *)",
+      "WebFetch(domain:github.com)",
+      "Bash(git fetch *)",
+      "Bash(git ls-tree *)"
+    ]
+  },
+  "model": "claude-opus-4-7",
+  "enableAllProjectMcpServers": true
+}

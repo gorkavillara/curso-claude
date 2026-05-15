@@ -1,0 +1,12 @@
+{
+  "EV-101": { "title": "Validación de prioridad en tareas", "status": "In Progress", "desc": "POST /api/tasks acepta priority fuera de rango. Debe validarse en el modelo, no en la ruta." },
+  "EV-102": { "title": "Conexión SQLite sin manejo de error", "status": "To Do", "desc": "backend/src/db/connection.ts no captura el fallo si el fichero está bloqueado. Cae el server." },
+  "EV-103": { "title": "Filtro por estado en GET /api/tasks", "status": "To Do", "desc": "Falta soportar ?status=done. No afecta al endpoint POST." },
+  "EV-104": { "title": "Falta paginación en GET /api/tasks", "status": "To Do", "desc": "GET /api/tasks devuelve todo sin limit/offset. No escala con muchas tareas." },
+  "EV-105": { "title": "created_at se devuelve sin formato ISO", "status": "To Do", "desc": "SQLite devuelve created_at como '2026-05-15 10:05:01', el frontend espera ISO 8601." },
+  "EV-106": { "title": "DELETE /api/tasks/:id no comprueba existencia", "status": "To Do", "desc": "Devuelve 200 aunque el id no exista. Debe ser 204 si borra y 404 si no existe." },
+  "EV-107": { "title": "CORS abierto a * en producción", "status": "In Progress", "desc": "cors() sin opciones expone la API a cualquier origen. Allowlist por env en prod." },
+  "EV-108": { "title": "description acepta HTML sin sanitizar", "status": "To Do", "desc": "XSS almacenado: description se persiste tal cual. Sanitizar en el modelo." },
+  "EV-109": { "title": "Falta endpoint de completar tareas en lote", "status": "Backlog", "desc": "No hay POST /api/tasks/bulk-complete. El frontend hace N llamadas PATCH." },
+  "EV-110": { "title": "Tests de integración no cubren errores 4xx", "status": "To Do", "desc": "Solo se prueban caminos felices. Faltan 400/404 para EV-101, EV-103 y EV-106." }
+}

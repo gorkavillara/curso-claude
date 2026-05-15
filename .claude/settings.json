@@ -1,0 +1,19 @@
+{
+  "env": {
+    "MCP_TIMEOUT": "10000",
+    "MCP_TOOL_TIMEOUT": "15000"
+  },
+  "permissions": {
+    "allow": ["mcp__fake-tracker__get_ticket"],
+    "ask": ["mcp__fake-tracker__search_tickets"],
+    "deny": ["mcp__fake-tracker__deploy"]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__fake-tracker__.*",
+        "hooks": [{ "type": "command", "command": "node mcp-server-demo/audit.js" }]
+      }
+    ]
+  }
+}
