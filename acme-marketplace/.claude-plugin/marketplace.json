@@ -1,0 +1,11 @@
+{
+  "name": "acme-marketplace",
+  "owner": { "name": "ACME Platform Team" },
+  "plugins": [
+    {
+      "name": "acme-format",
+      "source": "./plugins/acme-format",
+      "description": "Bloquea git commit si el lint (tsc --noEmit) falla."
+    }
+  ]
+}

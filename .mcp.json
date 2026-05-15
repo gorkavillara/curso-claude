@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "fake-tracker": { "command": "node", "args": ["./mcp-server-demo/fake-tracker/server.js"] }
+  }
+}
