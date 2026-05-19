@@ -27,8 +27,8 @@ function rowToTask(row: TaskRow): Task {
     id: row.id,
     title: row.title,
     description: row.description,
-    completed: row.completed,
-    created_at: row.created_at,
+    completed: row.completed === 1,
+    created_at: row.created_at
   };
 }
 
