@@ -28,7 +28,7 @@ function rowToTask(row: TaskRow): Task {
     title: row.title,
     description: row.description,
     completed: row.completed,
-    created_at: row.created_at
+    created_at: row.created_at,
   };
 }
 
