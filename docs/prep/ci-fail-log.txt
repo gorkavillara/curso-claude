@@ -1,0 +1,61 @@
+GitHub Actions — Log de fallo simulado para demo vídeo 46
+==========================================================
+Workflow: CI / Test
+Run ID: #47 (rama: feature/add-due-date)
+Commit: a3f91bc "feat: add due_date field to tasks"
+
+2025-05-20T09:14:02.341Z   ##[group]Run npm ci --production
+2025-05-20T09:14:02.341Z   npm ci --production
+2025-05-20T09:14:04.892Z   added 187 packages in 2.5s
+2025-05-20T09:14:04.892Z   ##[endgroup]
+2025-05-20T09:14:05.011Z   ##[group]Run npm test
+2025-05-20T09:14:05.011Z   npm test
+2025-05-20T09:14:05.211Z
+2025-05-20T09:14:05.211Z   > taskmaster-ts@1.0.0 test
+2025-05-20T09:14:05.211Z   > jest --forceExit
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z   FAIL tests/tasks.test.ts
+2025-05-20T09:14:07.443Z     Tasks API
+2025-05-20T09:14:07.443Z       ✓ creates and lists a task (234 ms)
+2025-05-20T09:14:07.443Z       ✗ rejects a task without title (12 ms)
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z     ● Tasks API › rejects a task without title
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z       Cannot find module '@types/jest/globals' from 'tests/tasks.test.ts'
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z       Require stack:
+2025-05-20T09:14:07.443Z         - tests/tasks.test.ts
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z       84 | import { describe, it, expect, beforeAll, afterAll } from '@types/jest/globals';
+2025-05-20T09:14:07.443Z          |                                                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z       at Resolver.resolveModule (node_modules/jest-resolve/build/resolver.js:294:11)
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z   FAIL tests/db.test.ts
+2025-05-20T09:14:07.443Z     TaskModel (SQLite)
+2025-05-20T09:14:07.443Z       ✗ creates, updates and removes a task (8 ms)
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z       ● TaskModel (SQLite) › creates, updates and removes a task
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z         Cannot find module '@types/jest/globals' from 'tests/db.test.ts'
+2025-05-20T09:14:07.443Z
+2025-05-20T09:14:07.443Z   Test Suites: 2 failed, 0 passed, 2 total
+2025-05-20T09:14:07.443Z   Tests:       2 failed, 1 passed, 3 total
+2025-05-20T09:14:07.443Z   Snapshots:   0 total
+2025-05-20T09:14:07.443Z   Time:        2.443 s
+2025-05-20T09:14:07.903Z   ##[endgroup]
+2025-05-20T09:14:07.903Z   ##[error]Process completed with exit code 1.
+
+==========================================================
+NOTA PARA GRABAR:
+Causa raíz: el job `test` usa `npm ci --production`, que excluye devDependencies.
+`@types/jest` está en devDependencies → no se instala → los tests no pueden importarlo.
+
+Evidencia clave: línea 67 del log → "npm ci --production"
+                 línea 84 del log → "Cannot find module '@types/jest/globals'"
+
+Fix: cambiar `npm ci --production` a `npm ci` en el job `test` del ci.yml
+     (el build stage puede seguir usando --omit=dev o --production)
+
+Verificación: relanzar el workflow tras el fix y comprobar que los 3 tests pasan.
+==========================================================
