@@ -4,12 +4,12 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # System deps for better-sqlite3 native build
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3
+RUN apk add --no-cache make
+RUN apk add --no-cache g++
 
-COPY package*.json ./
-COPY tsconfig.base.json ./
-COPY backend/tsconfig.json ./backend/tsconfig.json
-COPY backend/src ./backend/src
+# Copy everything first (cache-busting problem: any code change invalidates npm install)
+COPY . .
 
 RUN npm ci
 RUN npm run build:backend
@@ -25,7 +25,8 @@ WORKDIR /app
 RUN apk add --no-cache libstdc++
 
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev
+RUN npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 
@@ -34,7 +35,7 @@ RUN mkdir -p /app/data
 VOLUME ["/app/data"]
 
 ENV PORT=3000
-ENV DB_PATH=/app/data/taskmaster.db
+ENV DATABASE_URL=/app/data/taskmaster.db
 EXPOSE 3000
 
 CMD ["node", "dist/backend/server.js"]

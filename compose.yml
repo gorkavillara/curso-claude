@@ -5,10 +5,13 @@ services:
       dockerfile: Dockerfile
     image: taskmaster-ts-backend
     container_name: taskmaster-backend
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
       - PORT=3000
       - DB_PATH=/app/data/taskmaster.db
+      - DATABASE_URL=${DATABASE_URL}
     ports:
       - "3000:3000"
     volumes:

@@ -1,0 +1,34 @@
+Docker Compose Log — Fallo simulado para demo vídeo 45
+=======================================================
+Comando: docker compose up
+
+[+] Running 2/0
+ ✔ Container taskmaster-backend   Created    0.0s
+ ✔ Container taskmaster-frontend  Created    0.0s
+Attaching to taskmaster-backend, taskmaster-frontend
+
+taskmaster-backend  | [INFO] Starting TaskMaster-TS backend...
+taskmaster-backend  | [INFO] Connecting to database...
+taskmaster-backend  | [ERROR] Configuration error: DATABASE_URL is not defined
+taskmaster-backend  |
+taskmaster-backend  | Error: Cannot read properties of undefined (reading 'split')
+taskmaster-backend  |     at parseConnectionString (/app/dist/backend/db/connection.js:14:28)
+taskmaster-backend  |     at initDatabase (/app/dist/backend/db/connection.js:22:10)
+taskmaster-backend  |     at Object.<anonymous> (/app/dist/backend/server.js:8:1)
+taskmaster-backend  |     at Module._compile (node:internal/modules/cjs/loader:1364:14)
+taskmaster-backend  |
+taskmaster-backend exited with code 1
+taskmaster-frontend | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+taskmaster-frontend | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+taskmaster-frontend | 10-listen-on-ipv6-by-default.sh: info: IPv6 listen already enabled
+taskmaster-frontend | /docker-entrypoint.sh: Configuration complete; ready for start up
+taskmaster-frontend | 2025/05/20 10:31:05 [notice] 1#1: nginx/1.25.3
+taskmaster-frontend | 2025/05/20 10:31:05 [notice] 1#1: start worker processes
+
+-------------------------------------------------------
+NOTA PARA GRABAR:
+- La línea clave del error es: "ERROR Configuration error: DATABASE_URL is not defined"
+- El compose usa ${DATABASE_URL} pero el .env define DB_URL (nombre diferente)
+- Verificación: `docker compose config` muestra las variables resueltas
+- Fix: renombrar DB_URL a DATABASE_URL en .env, o usar DB_URL en compose.yml
+-------------------------------------------------------
