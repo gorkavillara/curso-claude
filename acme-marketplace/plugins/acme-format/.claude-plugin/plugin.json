@@ -1,6 +1,0 @@
-{
-  "name": "acme-format",
-  "version": "1.0.0",
-  "description": "Bloquea git commit si el lint (tsc --noEmit) falla.",
-  "author": { "name": "ACME Platform Team" }
-}
