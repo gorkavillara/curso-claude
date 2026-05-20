@@ -1,5 +1,12 @@
 import { getDatabase } from '../db/connection';
 
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
 export interface Task {
   id: number;
   title: string;
@@ -20,6 +27,31 @@ interface TaskRow {
   description: string;
   completed: number;
   created_at: string;
+}
+
+function validateInput(body: unknown, partial = false): TaskInput {
+  if (!body || typeof body !== 'object') {
+    throw new ValidationError('Body must be a JSON object');
+  }
+  const candidate = body as Record<string, unknown>;
+
+  if (!partial || candidate.title !== undefined) {
+    if (typeof candidate.title !== 'string' || candidate.title.trim() === '') {
+      throw new ValidationError('Field "title" is required and must be a non-empty string');
+    }
+  }
+  if (candidate.description !== undefined && typeof candidate.description !== 'string') {
+    throw new ValidationError('Field "description" must be a string');
+  }
+  if (candidate.completed !== undefined && typeof candidate.completed !== 'boolean') {
+    throw new ValidationError('Field "completed" must be a boolean');
+  }
+
+  return {
+    title: typeof candidate.title === 'string' ? candidate.title : '',
+    description: candidate.description as string | undefined,
+    completed: candidate.completed as boolean | undefined,
+  };
 }
 
 function rowToTask(row: TaskRow): Task {
@@ -47,7 +79,8 @@ export const TaskModel = {
     return row ? rowToTask(row) : null;
   },
 
-  create(input: TaskInput): Task {
+  create(body: unknown): Task {
+    const input = validateInput(body);
     const result = getDatabase()
       .prepare('INSERT INTO tasks (title, description, completed) VALUES (?, ?, ?)')
       .run(input.title, input.description ?? '', input.completed ? 1 : 0);
@@ -59,7 +92,8 @@ export const TaskModel = {
     return created;
   },
 
-  update(id: number, input: Partial<TaskInput>): Task | null {
+  update(id: number, body: unknown): Task | null {
+    const input = validateInput(body, true);
     const existing = this.get(id);
     if (!existing) return null;
 

@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { TaskModel, TaskInput } from '../models/task';
+import { TaskModel, ValidationError } from '../models/task';
 
 export const tasksRouter = Router();
 
@@ -8,33 +8,9 @@ function parseId(raw: string): number | null {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
-function validateInput(body: unknown, partial = false): TaskInput | string {
-  if (!body || typeof body !== 'object') {
-    return 'Body must be a JSON object';
-  }
-  const candidate = body as Record<string, unknown>;
-
-  if (!partial || candidate.title !== undefined) {
-    if (typeof candidate.title !== 'string' || candidate.title.trim() === '') {
-      return 'Field "title" is required and must be a non-empty string';
-    }
-  }
-  if (candidate.description !== undefined && typeof candidate.description !== 'string') {
-    return 'Field "description" must be a string';
-  }
-  if (candidate.completed !== undefined && typeof candidate.completed !== 'boolean') {
-    return 'Field "completed" must be a boolean';
-  }
-
-  return {
-    title: typeof candidate.title === 'string' ? candidate.title : '',
-    description: candidate.description as string | undefined,
-    completed: candidate.completed as boolean | undefined,
-  };
-}
-
 tasksRouter.get('/', (_req: Request, res: Response) => {
-  res.json(TaskModel.list());
+  const taskList = TaskModel.list();
+  res.json(taskList);
 });
 
 tasksRouter.get('/:id', (req: Request, res: Response) => {
@@ -48,13 +24,10 @@ tasksRouter.get('/:id', (req: Request, res: Response) => {
 
 tasksRouter.post('/', (req: Request, res: Response, next: NextFunction) => {
   try {
-    const parsed = validateInput(req.body);
-    if (typeof parsed === 'string') {
-      return res.status(400).json({ error: parsed });
-    }
-    const task = TaskModel.create(parsed);
+    const task = TaskModel.create(req.body);
     return res.status(201).json(task);
   } catch (err) {
+    if (err instanceof ValidationError) return res.status(400).json({ error: err.message });
     return next(err);
   }
 });
@@ -64,15 +37,11 @@ tasksRouter.put('/:id', (req: Request, res: Response, next: NextFunction) => {
     const id = parseId(req.params.id);
     if (id === null) return res.status(400).json({ error: 'Invalid id' });
 
-    const parsed = validateInput(req.body, true);
-    if (typeof parsed === 'string') {
-      return res.status(400).json({ error: parsed });
-    }
-
-    const updated = TaskModel.update(id, parsed);
+    const updated = TaskModel.update(id, req.body);
     if (!updated) return res.status(404).json({ error: 'Task not found' });
     return res.json(updated);
   } catch (err) {
+    if (err instanceof ValidationError) return res.status(400).json({ error: err.message });
     return next(err);
   }
 });
