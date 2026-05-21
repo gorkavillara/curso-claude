@@ -26,9 +26,17 @@ export function initDatabase(dbPath?: string): Database.Database {
       title TEXT NOT NULL,
       description TEXT NOT NULL DEFAULT '',
       completed INTEGER NOT NULL DEFAULT 0,
+      due_date TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
   `);
+
+  const col = db
+    .prepare(`SELECT COUNT(*) as n FROM pragma_table_info('tasks') WHERE name = 'due_date'`)
+    .get() as { n: number };
+  if (col.n === 0) {
+    db.exec(`ALTER TABLE tasks ADD COLUMN due_date TEXT;`);
+  }
 
   return db;
 }
